@@ -1,0 +1,34 @@
+body {
+  color: #000;
+  background-image: url("../img/headerbg.jpg");
+  background-repeat: repeat-x;
+}
+a {
+  color: #65462d;
+}
+header {
+  height: 175px;
+}
+header a {
+  background-image: url("../img/logo.png");
+  display: block;
+  height: 101px;
+  width: 233px;
+  font-size: 0;
+  margin: 33px auto;
+}
+.volume-holder .jp-volume-bar-value {
+  background-color: #65462d;
+}
+.episode_image {
+  width: 30%;
+  float: left;
+  padding-right: 3%;
+  margin-bottom: 40px;
+}
+article {
+  clear: left;
+}
+article .volume-holder {
+  margin-left: 50%;
+}
