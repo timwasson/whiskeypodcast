@@ -1,4 +1,4 @@
-whiskeypodcast
-==============
+Whiskey Podcast Theme
+=====================
 
-A theme for PHP-Podcast-Creator for my whiskey podcast.
+Just a simple theme for my podcast, which relies on my project PHP Procast Creator. That project is located here: https://github.com/timwasson/PHP-Podcast-Creator
