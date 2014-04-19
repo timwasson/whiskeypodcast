@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>{{ title }}</title>
+	
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+</head>
+<body>
+	
+	<img src="/images/itunes_image.jpg" />
+	
+	<h1>{{ title }}</h1>
+	<h2>{{ subtitle }}</h2>
+	
+</body>
+<script>
+  $( document ).ready(function() {
+    // Handler for .ready() called.
+    $.getJSON( "/core/appview-jsongen.php", function( data ) {
+      var items = [];
+      $.each( data, function( key, val ) {
+        items.push( "<li id='" + key + "'>" + val + "</li>" );
+      });
+     
+      $( "<ul/>", {
+        "class": "my-new-list",
+        html: items.join( "" )
+      }).appendTo( "body" );
+    });
+  });
+</script>
+</html>
