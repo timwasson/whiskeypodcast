@@ -49,10 +49,7 @@ table {
 /*!Custom CSS */
 @menubg: rgba(0,0,0,.8);
 @listbg: rgba(255,255,255,.6);
-@bodybg: #d2d2d2;
-@reswidth: 600px;
-@headebg: #989898;
-@bordercolor: #938c85;
+@bodybg: #cdc8c2;
 /*
 body:before {
   content:"";
@@ -74,14 +71,13 @@ body {
   background-color: @bodybg;
  }
 
-.menu { 
-  z-index: 2;
+.menu {
   width:33.333%;
   float: left;
   background-color: @menubg;
   position: fixed;
   top:0;
-  bottom: 80px;
+  bottom: 50px;
   color: #fff;
   overflow: auto;
   h1 {
@@ -113,35 +109,21 @@ body {
       }
     }
   }
-  @media(max-width: @reswidth) {
-    width: 100%;
-    left: -100%;
-  }
 }
 .episodes, .ep_info {
   width: 33.333%;
   position: fixed;
-  background-color: @bodybg;
-  top:0;
-  bottom: 80px;
-  border-left: solid 1px @bordercolor;
+  //background-color: @listbg;
+  height: 100%;
+  border-left: solid 1px #000;
    h2 {
-    background-color: @headebg;
+    background-color: #000;
     color: #fff;
     font-size: 1.5em;
     padding: 12px;
-    i {
-      @media(min-width: @reswidth) {
-        display: none;
-      }
-    }
-  }
-  @media(max-width: @reswidth) {
-    width: 100%;
   }
 }
 .episodes {
-  z-index: 1;
   left: 33.333%;
   li {
     clear: left;
@@ -156,26 +138,17 @@ body {
     }
     p {
       width: 70%;
-      padding: 0 15px;
-      font-size: 1.25em;
-      letter-spacing: 0px;
-      font-weight: lighter;
     }
     img {
       width:100%;
       height: auto;
     }
   }
-  @media(max-width: @reswidth) {
-    width: 100%;
-    left:0;
-  }
 }
 .ep_info {
-  z-index: 2;
   left: 66.666%;
   article {
-    padding: 20px;
+    padding: 12px;
     h1 {
     font-size: 2em;
     letter-spacing: -2px;
@@ -191,13 +164,9 @@ body {
         background-color: @menubg;
         display: inline-block;
         padding: 8px;
-        width:45%;
+        width:40%;
         color: #fff;
         text-decoration: none;
-        i {
-          display: block;
-          font-size: 3em;
-        }
         &:first-child {
           border-radius: 6px 0px 0px 6px;
         }
@@ -207,9 +176,6 @@ body {
       }
     } 
   }
-  @media(max-width: @reswidth) {
-    left:100%;
-  }
 }
 /* The player at the bottom */
 #jp_container {
@@ -217,29 +183,19 @@ body {
   bottom:0;
   background-color: rgba(0,0,0,.8);
   width:100%;
-  height: 80px;
+  height: 100px;
   color: #fff;
-}
-p.timer {
-  position: absolute;
-  left: 85px;
-  top:8px;
 }
 .music-controls {
   color: #fff;
-  position: absolute;
-  width:80px;
+  float: left;
+  width:100px;
+  margin: 0 8px;
   background-color: @menubg;
-  display: table;
   li {
+    display: inline;
     a {
-      color: #fff;
-      height: 80px;
-      width: 80px;
-      font-size: 2em;
-      display: table-cell;  
-      vertical-align: middle;
-      text-align: center;
+      color: #fff;      
     }
   }
 }
@@ -247,9 +203,8 @@ p.timer {
   background-color: gray;
   height: 20px;
   position: absolute;
-  left: 80px;
+  left: 100px;
   right: 100px;
-  top:30px;
   .jp-seek-bar {
     background-color: red;
     height: 20px;

@@ -144,15 +144,16 @@ body:before {
 */
 body {
   font-family: "Helvetica Neue", "Helvetica", sans-serif;
-  background-color: #cdc8c2;
+  background-color: #d2d2d2;
 }
 .menu {
+  z-index: 2;
   width: 33.333%;
   float: left;
   background-color: rgba(0, 0, 0, 0.8);
   position: fixed;
   top: 0;
-  bottom: 50px;
+  bottom: 80px;
   color: #fff;
   overflow: auto;
 }
@@ -183,21 +184,42 @@ body {
   color: #fff;
   text-decoration: none;
 }
+@media (max-width: 600px) {
+  .menu {
+    width: 100%;
+    left: -100%;
+  }
+}
 .episodes,
 .ep_info {
   width: 33.333%;
   position: fixed;
-  height: 100%;
-  border-left: solid 1px #000;
+  background-color: #d2d2d2;
+  top: 0;
+  bottom: 80px;
+  border-left: solid 1px #938c85;
 }
 .episodes h2,
 .ep_info h2 {
-  background-color: #000;
+  background-color: #989898;
   color: #fff;
   font-size: 1.5em;
   padding: 12px;
 }
+@media (min-width: 600px) {
+  .episodes h2 i,
+  .ep_info h2 i {
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  .episodes,
+  .ep_info {
+    width: 100%;
+  }
+}
 .episodes {
+  z-index: 1;
   left: 33.333%;
 }
 .episodes li {
@@ -213,16 +235,27 @@ body {
 }
 .episodes li p {
   width: 70%;
+  padding: 0 15px;
+  font-size: 1.25em;
+  letter-spacing: 0px;
+  font-weight: lighter;
 }
 .episodes li img {
   width: 100%;
   height: auto;
 }
+@media (max-width: 600px) {
+  .episodes {
+    width: 100%;
+    left: 0;
+  }
+}
 .ep_info {
+  z-index: 2;
   left: 66.666%;
 }
 .ep_info article {
-  padding: 12px;
+  padding: 20px;
 }
 .ep_info article h1 {
   font-size: 2em;
@@ -240,9 +273,13 @@ body {
   background-color: rgba(0, 0, 0, 0.8);
   display: inline-block;
   padding: 8px;
-  width: 40%;
+  width: 45%;
   color: #fff;
   text-decoration: none;
+}
+.ep_info article .linkbar a i {
+  display: block;
+  font-size: 3em;
 }
 .ep_info article .linkbar a:first-child {
   border-radius: 6px 0px 0px 6px;
@@ -250,34 +287,48 @@ body {
 .ep_info article .linkbar a:last-child {
   border-radius: 0px 6px 6px 0px;
 }
+@media (max-width: 600px) {
+  .ep_info {
+    left: 100%;
+  }
+}
 /* The player at the bottom */
 #jp_container {
   position: fixed;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.8);
   width: 100%;
-  height: 100px;
+  height: 80px;
   color: #fff;
+}
+p.timer {
+  position: absolute;
+  left: 85px;
+  top: 8px;
 }
 .music-controls {
   color: #fff;
-  float: left;
-  width: 100px;
-  margin: 0 8px;
+  position: absolute;
+  width: 80px;
   background-color: rgba(0, 0, 0, 0.8);
-}
-.music-controls li {
-  display: inline;
+  display: table;
 }
 .music-controls li a {
   color: #fff;
+  height: 80px;
+  width: 80px;
+  font-size: 2em;
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
 }
 .jp-progress {
   background-color: gray;
   height: 20px;
   position: absolute;
-  left: 100px;
+  left: 80px;
   right: 100px;
+  top: 30px;
 }
 .jp-progress .jp-seek-bar {
   background-color: red;

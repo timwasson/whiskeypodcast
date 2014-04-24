@@ -14,19 +14,21 @@
   	<h1>{{ title }}</h1>
   	<h2>{{ subtitle }}</h2>
   	<ul>
+  	  <li class="eplink"><a href="#episodes"><i class="fa fa-headphones"></i> Episodes</a></li>
   	  <li class="itunes"><a href="itpc://whiskeypodcast.com/feed.xml"><i class="fa fa-music"></i> Add to iTunes</a></li>
       <li class="rss"><a href="/feed.xml"><i class="fa fa-rss"></i> RSS Feed</a></li>
+      <li class="email"><a href="mailto:whiskeypodcast@gmail.com"><i class="fa fa-envelope"></i> Email us</a></li>
   	</ul>
 	</div>
 	
 	<div class="episodes">
-	  <h2>Episodes</h2>
+	  <h2><i class="fa fa-bars" id="main-menu"></i> Episodes</h2>
   	<ul id="ep-list">
   	</ul>
 	</div>
 	
 	<div class="ep_info">
-	  <h2>Episode Information</h2>
+	  <h2><i class="fa fa-angle-left"></i> Information</h2>
 	  <article>
   	  <h1></h1>
   	  <p></p>
@@ -38,16 +40,16 @@
 	
 	<div id="jp_container">
 					<div id="jquery_jplayer"></div>
-					<p>
+					<p class="timer">
 						<span class="track-name">&nbsp;</span>
 						<span class="jp-current-time"></span> | <span class="jp-duration"></span>
 						
 					</p>
 					
 					<ul class="music-controls">
-							<li><a class="jp-play btn btn-primary" href="#"><i class="fa fa-play"></i></a></li>
-							<li><a class="jp-pause btn btn-primary" href="#"><i class="fa fa-pause"></i></a></li>
-							<li><a class="jp-stop btn btn-primary" href="#"><i class="fa fa-stop"></i></a></li>
+							<li><a class="jp-play" href="#"><i class="fa fa-play"></i></a></li>
+							<li><a class="jp-pause" href="#"><i class="fa fa-pause"></i></a></li>
+							<!--<li><a class="jp-stop btn btn-primary" href="#"><i class="fa fa-stop"></i></a></li>-->
 					</ul>
 
 					<div class="jp-progress">
@@ -56,23 +58,23 @@
 						</div>
 					</div>
 					
-					<div class="btn-holder">
+					<!-- <div class="btn-holder">
 					
 						<div class="volume-holder">
-							<a class="jp-mute" href="#"><i class="icon-volume-off"></i></a>
-							<a class="jp-unmute" href="#"><i class="icon-volume-down"></i></a>
+							<a class="jp-mute" href="#"><i class="fa fa-volume-off"></i></a>
+							<a class="jp-unmute" href="#"><i class="fa fa-volume-down"></i></a>
 							
 							<div class="jp-volume-bar">
 								<div class="jp-volume-bar-value"></div>
 							</div>
 			
-							<a class="jp-volume-max" href="#"><i class="icon-volume-up"></i></a>
-						</div>
+							<a class="jp-volume-max" href="#"><i class="fa fa-volume-up"></i></a>
+						</div> -->
 					</div>
 </body>
 <script type="text/javascript" src="/components/player/jquery.jplayer.min.js"></script>
 <script>
-  $(document).ready(function() {
+$(document).ready(function() {
   // Local copy of jQuery selectors, for performance.
 	var	my_jPlayer = $("#jquery_jplayer"),
 		my_trackName = $("#jp_container .track-name"),
@@ -111,51 +113,72 @@
 	});
 	
   var items = [];
-    // Handler for .ready() called.
-    $.getJSON( "/core/appview-jsongen.php", function( data ) {      
-      // Create the big data object for all episodes.
-      $.each( data['item'], function( key, val ) {
-        
-        var playitem = {};
-        playitem["title"] = val['title'];
-        playitem["audio"] = val['enclosure'];
-        playitem["image"] = val['image'];
-        playitem["description"] = val["description"];
-        
-        items.push(playitem);
-      });
-    }).done(function() {
-      // Create the list.
-      $.each(items, function(key, val){
-        //console.log(val['image']);
-        var tempimg = val['image'];
-        $("ul#ep-list").append( "<li id='" + key + "' class=\"track\"><img src=\""+tempimg+"\" /><p>" + val['title'] + "</p></li>" );
-      });
+  // Handler for .ready() called.
+  $.getJSON( "/core/appview-jsongen.php", function( data ) {      
+    // Create the big data object for all episodes.
+    $.each( data['item'], function( key, val ) {
       
-      // Load the first episode. Feels like a hack. Works. So whatever.
+      var playitem = {};
+      playitem["title"] = val['title'];
+      playitem["audio"] = val['enclosure'];
+      playitem["image"] = val['image'];
+      playitem["description"] = val["description"];
+      
+      items.push(playitem);
+    });
+  }).done(function() {
+    // Create the list.
+    $.each(items, function(key, val){
+      //console.log(val['image']);
+      var tempimg = val['image'];
+      $("ul#ep-list").append( "<li id='" + key + "' class=\"track\"><img src=\""+tempimg+"\" /><p>" + val['title'] + "</p></li>" );
+    });
+    
+    // Load the first episode. Feels like a hack. Works. So whatever.
+    if($(window).width() > 600) {
       $("ul#ep-list li:first-child").click();
-    }); 
-   
-    $("#ep-list").delegate( "li", "click", function() {
-      $("#ep-list .active").removeClass("active");
-      $(this).addClass("active");
-      
-      var epid = $(this).attr("id");
-  		
-  		$(".ep_info h1").text(items[epid].title);
-  		$(".ep_info p").text(items[epid].description);
-  		$(".ep_info a[href=#download]").attr("href",items[epid].audio);	
-  		$(".ep_info a[href=#play]").click(function(){
-    		// update the jPlayer to play the file, fool.
-        my_trackName.text($(this).text());
-    		my_jPlayer.jPlayer("setMedia", {
-    			mp3:items[epid].audio
-    		});
-    	
+    }
+  }); 
+  
+  $("#ep-list").delegate( "li", "click", function() {
+    $("#ep-list .active").removeClass("active");
+    $(this).addClass("active");
+    
+    var epid = $(this).attr("id");
+    
+    // make the ID from the MP3
+    eplongid = items[epid].audio.split("/");
+    eplongid = eplongid[eplongid.length - 1];
+    eplongid = eplongid.split(".");
+    eplongid = eplongid[0];
+    
+    window.location.hash = "/"+eplongid+"/";
+    
+    if($(window).width() < 600) {
+      $(".ep_info").animate({"left":0},300);
+    }
+    
+    $(".ep_info h1").text(items[epid].title);
+    $(".ep_info p").text(items[epid].description);
+    $(".ep_info a[href=#download]").attr("href",items[epid].audio);	
+    $(".ep_info a[href=#play]").click(function(){
+  		// update the jPlayer to play the file, fool.
+      my_trackName.text(items[epid].title);
+  		my_jPlayer.jPlayer("setMedia", {
+  			mp3:items[epid].audio
   		});
-      //console.log(items);
     });
   });
+  $("#main-menu").click(function() {
+    $(".menu").animate({"left":0}, 300);
+  });
+  $(".ep_info h2").click(function() {
+    $(".ep_info").animate({"left": "100%"},300);
+  })
+  $(".eplink").click(function() {
+    $(".menu").animate({"left":"-100%"}, 300);
+  });
+});
    
 </script>
 </html>
