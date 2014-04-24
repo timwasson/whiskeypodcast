@@ -5,29 +5,157 @@
 	<title>{{ title }}</title>
 	
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" />
+	<link rel="stylesheet" type="text/css" href="/themes/whiskeypodcast/css/custom.css" />
 </head>
 <body>
+	<div class="menu">
+  	<img src="/images/itunes_image.jpg" />
+  	<h1>{{ title }}</h1>
+  	<h2>{{ subtitle }}</h2>
+  	<ul>
+  	  <li class="itunes"><a href="itpc://whiskeypodcast.com/feed.xml"><i class="fa fa-music"></i> Add to iTunes</a></li>
+      <li class="rss"><a href="/feed.xml"><i class="fa fa-rss"></i> RSS Feed</a></li>
+  	</ul>
+	</div>
 	
-	<img src="/images/itunes_image.jpg" />
+	<div class="episodes">
+	  <h2>Episodes</h2>
+  	<ul id="ep-list">
+  	</ul>
+	</div>
 	
-	<h1>{{ title }}</h1>
-	<h2>{{ subtitle }}</h2>
+	<div class="ep_info">
+	  <h2>Episode Information</h2>
+	  <article>
+  	  <h1></h1>
+  	  <p></p>
+  	  <div class="linkbar">
+    	  <a href="#play"><i class="fa fa-headphones"></i>Listen Now</a><a href="#download"><i class="fa fa-download"></i>Download</a>
+  	  </div>
+	  </article>
+	</div>
 	
+	<div id="jp_container">
+					<div id="jquery_jplayer"></div>
+					<p>
+						<span class="track-name">&nbsp;</span>
+						<span class="jp-current-time"></span> | <span class="jp-duration"></span>
+						
+					</p>
+					
+					<ul class="music-controls">
+							<li><a class="jp-play btn btn-primary" href="#"><i class="fa fa-play"></i></a></li>
+							<li><a class="jp-pause btn btn-primary" href="#"><i class="fa fa-pause"></i></a></li>
+							<li><a class="jp-stop btn btn-primary" href="#"><i class="fa fa-stop"></i></a></li>
+					</ul>
+
+					<div class="jp-progress">
+						<div class="jp-seek-bar">
+							<div class="jp-play-bar"></div>
+						</div>
+					</div>
+					
+					<div class="btn-holder">
+					
+						<div class="volume-holder">
+							<a class="jp-mute" href="#"><i class="icon-volume-off"></i></a>
+							<a class="jp-unmute" href="#"><i class="icon-volume-down"></i></a>
+							
+							<div class="jp-volume-bar">
+								<div class="jp-volume-bar-value"></div>
+							</div>
+			
+							<a class="jp-volume-max" href="#"><i class="icon-volume-up"></i></a>
+						</div>
+					</div>
 </body>
+<script type="text/javascript" src="/components/player/jquery.jplayer.min.js"></script>
 <script>
-  $( document ).ready(function() {
+  $(document).ready(function() {
+  // Local copy of jQuery selectors, for performance.
+	var	my_jPlayer = $("#jquery_jplayer"),
+		my_trackName = $("#jp_container .track-name"),
+		my_playState = $("#jp_container .play-state");
+
+	// Some options
+	var	opt_play_first = false, // If true, will attempt to auto-play the default track on page loads. No effect on mobile devices, like iOS.
+		opt_auto_play = true, // If true, when a track is selected, it will auto-play.
+		opt_text_playing = "", // Text when playing
+		opt_text_selected = ""; // Text when not playing
+
+	// A flag to capture the first track
+	var first_track = true;
+
+	// Initialize the play state text
+	my_playState.text(opt_text_selected);
+
+	// Instance jPlayer
+	my_jPlayer.jPlayer({
+		ready: function () {
+			$("#jp_container .track:first").click();
+		},
+		play: function(event) {
+			my_playState.text(opt_text_playing);
+		},
+		pause: function(event) {
+			my_playState.text(opt_text_selected);
+		},
+		ended: function(event) {
+			my_playState.text(opt_text_selected);
+		},
+		swfPath: "/components/player",
+		cssSelectorAncestor: "#jp_container",
+		supplied: "mp3",
+		wmode: "window"
+	});
+	
+  var items = [];
     // Handler for .ready() called.
-    $.getJSON( "/core/appview-jsongen.php", function( data ) {
-      var items = [];
-      $.each( data, function( key, val ) {
-        items.push( "<li id='" + key + "'>" + val + "</li>" );
+    $.getJSON( "/core/appview-jsongen.php", function( data ) {      
+      // Create the big data object for all episodes.
+      $.each( data['item'], function( key, val ) {
+        
+        var playitem = {};
+        playitem["title"] = val['title'];
+        playitem["audio"] = val['enclosure'];
+        playitem["image"] = val['image'];
+        playitem["description"] = val["description"];
+        
+        items.push(playitem);
       });
-     
-      $( "<ul/>", {
-        "class": "my-new-list",
-        html: items.join( "" )
-      }).appendTo( "body" );
+    }).done(function() {
+      // Create the list.
+      $.each(items, function(key, val){
+        //console.log(val['image']);
+        var tempimg = val['image'];
+        $("ul#ep-list").append( "<li id='" + key + "' class=\"track\"><img src=\""+tempimg+"\" /><p>" + val['title'] + "</p></li>" );
+      });
+      
+      // Load the first episode. Feels like a hack. Works. So whatever.
+      $("ul#ep-list li:first-child").click();
+    }); 
+   
+    $("#ep-list").delegate( "li", "click", function() {
+      $("#ep-list .active").removeClass("active");
+      $(this).addClass("active");
+      
+      var epid = $(this).attr("id");
+  		
+  		$(".ep_info h1").text(items[epid].title);
+  		$(".ep_info p").text(items[epid].description);
+  		$(".ep_info a[href=#download]").attr("href",items[epid].audio);	
+  		$(".ep_info a[href=#play]").click(function(){
+    		// update the jPlayer to play the file, fool.
+        my_trackName.text($(this).text());
+    		my_jPlayer.jPlayer("setMedia", {
+    			mp3:items[epid].audio
+    		});
+    	
+  		});
+      //console.log(items);
     });
   });
+   
 </script>
 </html>

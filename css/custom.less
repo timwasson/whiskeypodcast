@@ -1,39 +1,218 @@
-@mainbrown: #65462d;
-
+@charset "UTF-8";
+/* CSS Document */
+/* RESET */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
 body {
-	color:#000;
-	background-image: url("../img/headerbg.jpg");
-	background-repeat: repeat-x;
+	line-height: 1;
 }
-a {
-	color: @mainbrown;
+ol, ul {
+	list-style: none;
 }
-header {
-  a {
-    background-image: url("../img/logo.png");
-    display: block;
-    height:101px;
-    width: 233px;
-    font-size: 0;
-    margin: 33px auto;
-  }
-  height:175px;
+blockquote, q {
+	quotes: none;
 }
-.volume-holder {
-	.jp-volume-bar-value {
-		background-color: @mainbrown;
-	}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
 }
-.episode_image {
-  width:30%;
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+} 
+
+/*!Custom CSS */
+@menubg: rgba(0,0,0,.8);
+@listbg: rgba(255,255,255,.6);
+@bodybg: #cdc8c2;
+/*
+body:before {
+  content:"";
+  position:fixed;
+  height:100%;
+  width: 100%;
+  background-image: url(/images/itunes_image.jpg);
+  background-size: cover;
+  background-position: center center;
+  -webkit-filter: blur(15px);
+  -moz-filter: blur(15px);
+  -o-filter: blur(15px);
+  -ms-filter: blur(15px);
+  filter: blur(15px);
+}
+*/
+body {
+  font-family: "Helvetica Neue", "Helvetica", sans-serif;
+  background-color: @bodybg;
+ }
+
+.menu {
+  width:33.333%;
   float: left;
-  padding-right: 3%;
-  margin-bottom: 40px;
+  background-color: @menubg;
+  position: fixed;
+  top:0;
+  bottom: 50px;
+  color: #fff;
+  overflow: auto;
+  h1 {
+    font-size: 1.8em;
+    margin-top: 30px;
+    margin-left: 8px;
+    letter-spacing: -1px;
+  }
+  h2 {
+    margin-left: 8px;
+  }
+  img {
+    max-width: 100%;
+  }
+  .itunes {
+    background-color: #1758a7;
+  }
+   .rss {
+    background-color: #FF6600;
+  }
+  ul {
+    margin-top: 30px;
+    li {
+      a {
+        padding: 6px;
+        display: block;
+        color: #fff;
+        text-decoration: none;
+      }
+    }
+  }
 }
-article {
-	clear: left;
-	
+.episodes, .ep_info {
+  width: 33.333%;
+  position: fixed;
+  //background-color: @listbg;
+  height: 100%;
+  border-left: solid 1px #000;
+   h2 {
+    background-color: #000;
+    color: #fff;
+    font-size: 1.5em;
+    padding: 12px;
+  }
 }
-article .volume-holder {
-  margin-left: 50%;
+.episodes {
+  left: 33.333%;
+  li {
+    clear: left;
+    display: table-row;
+    &.active {
+      background-color: @listbg;
+    }
+    p {
+      //margin: 50% 0 0 0; 
+      display: table-cell;
+      vertical-align: middle; 
+    }
+    p {
+      width: 70%;
+    }
+    img {
+      width:100%;
+      height: auto;
+    }
+  }
+}
+.ep_info {
+  left: 66.666%;
+  article {
+    padding: 12px;
+    h1 {
+    font-size: 2em;
+    letter-spacing: -2px;
+    margin: 0 0 20px 0;
+    }
+    p {
+      line-height: 1.3em;
+    }
+    .linkbar {
+    text-align: center;
+    margin-top: 30px;
+      a {
+        background-color: @menubg;
+        display: inline-block;
+        padding: 8px;
+        width:40%;
+        color: #fff;
+        text-decoration: none;
+        &:first-child {
+          border-radius: 6px 0px 0px 6px;
+        }
+        &:last-child {
+          border-radius: 0px 6px 6px 0px;
+        }
+      }
+    } 
+  }
+}
+/* The player at the bottom */
+#jp_container {
+  position: fixed;
+  bottom:0;
+  background-color: rgba(0,0,0,.8);
+  width:100%;
+  height: 100px;
+  color: #fff;
+}
+.music-controls {
+  color: #fff;
+  float: left;
+  width:100px;
+  margin: 0 8px;
+  background-color: @menubg;
+  li {
+    display: inline;
+    a {
+      color: #fff;      
+    }
+  }
+}
+.jp-progress {
+  background-color: gray;
+  height: 20px;
+  position: absolute;
+  left: 100px;
+  right: 100px;
+  .jp-seek-bar {
+    background-color: red;
+    height: 20px;
+    
+  }
+  .jp-play-bar {
+      background-color: purple;
+      height: 20px;
+      position: absolute;
+    }
 }
