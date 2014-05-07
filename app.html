@@ -7,18 +7,21 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" />
 	<link rel="stylesheet" type="text/css" href="/themes/whiskeypodcast/css/custom.css" />
+	<link rel="shortcut icon" href="themes/whiskeypodcast/favicon.ico?v=1.1"> 
 </head>
 <body>
 	<div class="menu">
-  	<img src="/images/itunes_image.jpg" />
-  	<h1>{{ title }}</h1>
-  	<h2>{{ subtitle }}</h2>
-  	<ul>
-  	  <li class="eplink"><a href="#episodes"><i class="fa fa-headphones"></i> Episodes</a></li>
-  	  <li class="itunes"><a href="itpc://whiskeypodcast.com/feed.xml"><i class="fa fa-music"></i> Add to iTunes</a></li>
-      <li class="rss"><a href="/feed.xml"><i class="fa fa-rss"></i> RSS Feed</a></li>
-      <li class="email"><a href="mailto:whiskeypodcast@gmail.com"><i class="fa fa-envelope"></i> Email us</a></li>
-  	</ul>
+	  <section>
+  	  <img src="/images/itunes_image.jpg" />
+    	<h1>{{ title }}</h1>
+    	<h2>{{ subtitle }}</h2>
+    	<ul>
+    	  <li class="eplink"><a href="#episodes"><i class="fa fa-headphones"></i> Episodes</a></li>
+    	  <li class="itunes"><a href="itpc://whiskeypodcast.com/feed.xml"><i class="fa fa-music"></i> Add to iTunes</a></li>
+        <li class="rss"><a href="/feed.xml"><i class="fa fa-rss"></i> RSS Feed</a></li>
+        <li class="email"><a href="mailto:whiskeypodcast@gmail.com"><i class="fa fa-envelope"></i> Email us</a></li>
+    	</ul>
+  	</section>
 	</div>
 	
 	<div class="episodes">
@@ -28,7 +31,7 @@
 	</div>
 	
 	<div class="ep_info">
-	  <h2><i class="fa fa-angle-left"></i> Information</h2>
+	  <h2><i class="fa fa-angle-left"> <span>Back</span></i> Information</h2>
 	  <article>
   	  <h1></h1>
   	  <p></p>
@@ -42,7 +45,6 @@
 					<div id="jquery_jplayer"></div>
 					<p class="timer">
 						<span class="track-name">&nbsp;</span>
-						<span class="jp-current-time"></span> | <span class="jp-duration"></span>
 						
 					</p>
 					
@@ -57,7 +59,9 @@
 							<div class="jp-play-bar"></div>
 						</div>
 					</div>
-					
+					<div class="timedur">
+  					<span class="jp-current-time"></span> | <span class="jp-duration"></span>
+					</div>
 					<!-- <div class="btn-holder">
 					
 						<div class="volume-holder">
@@ -75,6 +79,10 @@
 <script type="text/javascript" src="/components/player/jquery.jplayer.min.js"></script>
 <script>
 $(document).ready(function() {
+  // First get the hash
+  var ephash = window.location.hash.replace("/","").replace("#","").replace("/","");
+  console.log(ephash);
+  
   // Local copy of jQuery selectors, for performance.
 	var	my_jPlayer = $("#jquery_jplayer"),
 		my_trackName = $("#jp_container .track-name"),
@@ -95,7 +103,17 @@ $(document).ready(function() {
 	// Instance jPlayer
 	my_jPlayer.jPlayer({
 		ready: function () {
-			$("#jp_container .track:first").click();
+			// Load up the first track. Play it based on if a hash is set or not. 
+      if(ephash.length > 0) {
+        epid = $("ul#ep-list li[data-epid="+ephash+"]").attr("id");
+      } else {
+        epid = $("ul#ep-list li:first-child").attr("id");
+      }
+      my_trackName.text(items[epid].title);
+  		my_jPlayer.jPlayer("setMedia", {
+  			mp3:items[epid].audio
+  		});
+
 		},
 		play: function(event) {
 			my_playState.text(opt_text_playing);
@@ -114,7 +132,7 @@ $(document).ready(function() {
 	
   var items = [];
   // Handler for .ready() called.
-  $.getJSON( "/core/appview-jsongen.php", function( data ) {      
+  $.getJSON( "/feed.json", function( data ) {      
     // Create the big data object for all episodes.
     $.each( data['item'], function( key, val ) {
       
@@ -131,11 +149,23 @@ $(document).ready(function() {
     $.each(items, function(key, val){
       //console.log(val['image']);
       var tempimg = val['image'];
-      $("ul#ep-list").append( "<li id='" + key + "' class=\"track\"><img src=\""+tempimg+"\" /><p>" + val['title'] + "</p></li>" );
+      
+      // make the ID from the MP3
+      eplongid = val['audio'].split("/");
+      eplongid = eplongid[eplongid.length - 1];
+      eplongid = eplongid.split(".");
+      eplongid = eplongid[0];
+      
+      $("ul#ep-list").append( "<li id='" + key + "' data-epid=\""+eplongid+"\" class=\"track\"><img src=\""+tempimg+"\" /><p>" + val['title'] + "</p></li>" );
     });
     
     // Load the first episode. Feels like a hack. Works. So whatever.
-    if($(window).width() > 600) {
+    // Check for a hash to select the correct episode
+    if(ephash.length > 0) {
+      $("ul#ep-list li[data-epid="+ephash+"]").click();
+  		
+    } else if($(window).width() > 600) {
+      // Check for a hash to select the correct episode
       $("ul#ep-list li:first-child").click();
     }
   }); 
@@ -146,13 +176,7 @@ $(document).ready(function() {
     
     var epid = $(this).attr("id");
     
-    // make the ID from the MP3
-    eplongid = items[epid].audio.split("/");
-    eplongid = eplongid[eplongid.length - 1];
-    eplongid = eplongid.split(".");
-    eplongid = eplongid[0];
-    
-    window.location.hash = "/"+eplongid+"/";
+    window.location.hash = "/"+$(this).data("epid")+"/";
     
     if($(window).width() < 600) {
       $(".ep_info").animate({"left":0},300);
@@ -161,22 +185,26 @@ $(document).ready(function() {
     $(".ep_info h1").text(items[epid].title);
     $(".ep_info p").text(items[epid].description);
     $(".ep_info a[href=#download]").attr("href",items[epid].audio);	
-    $(".ep_info a[href=#play]").click(function(){
+    $(".ep_info a[href=#play]").click(function(e){
+      e.preventDefault();
   		// update the jPlayer to play the file, fool.
       my_trackName.text(items[epid].title);
   		my_jPlayer.jPlayer("setMedia", {
   			mp3:items[epid].audio
-  		});
+  		}).jPlayer("play");
     });
   });
   $("#main-menu").click(function() {
     $(".menu").animate({"left":0}, 300);
   });
-  $(".ep_info h2").click(function() {
+  $(".ep_info h2 i").click(function() {
     $(".ep_info").animate({"left": "100%"},300);
   })
-  $(".eplink").click(function() {
-    $(".menu").animate({"left":"-100%"}, 300);
+  $(".eplink").click(function(e) {
+    e.preventDefault();
+    if($(window).width() < 600) {
+      $(".menu").animate({"left":"-100%"}, 300);
+    }
   });
 });
    
